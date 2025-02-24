@@ -27,7 +27,7 @@ const HomePage = () => {
           </div>
 
           {/* Preview Section */}
-          <div className="bg-white rounded-lg shadow-lg p-6">
+          <div className="bg-white rounded-lg shadow-lg p-6 ">
             <Preview resumeData={resumeData} />
           </div>
         </div>
