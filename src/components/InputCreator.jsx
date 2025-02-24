@@ -12,6 +12,8 @@ const InputCreator = ({ onUpdate }) => {
     skills: [''],
   });
 
+//   console.log(generateInitialState)
+
   const { control, setValue, getValues, watch } = useForm({
     defaultValues: generateInitialState(),
   });
@@ -35,6 +37,7 @@ const InputCreator = ({ onUpdate }) => {
         ? `${section}.${index}.${field.name}`
         : `${section}${section === 'summary' ? '' : '.' + field.name}`;
     const commonClasses = 'w-full p-3 mt-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none';
+
 
     return (
       <Controller
