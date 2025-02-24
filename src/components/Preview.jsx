@@ -28,8 +28,10 @@ const Preview = ({ resumeData }) => {
               <h4 className="text-md font-medium text-gray-800 break-words">
                 {exp.title || 'Job Title'} - {exp.company || 'Company'}
               </h4>
-              <p className="text-gray-600 break-words">{exp.duration || 'Duration'}</p>
-              <p className="text-gray-700 mt-1 whitespace-pre-wrap break-words">{exp.description || 'Description'}</p>
+              <p className="text-gray-600 break-words">
+                {(exp.startDate && exp.endDate) ? `${exp.startDate} - ${exp.endDate}` : 'Start Date - End Date'}
+              </p>
+             <p className="text-gray-700 mt-1 whitespace-pre-wrap break-words">{exp.description || 'Description'}</p>
             </div>
           ))}
         </div>
