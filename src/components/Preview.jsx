@@ -7,7 +7,9 @@ const Preview = ({ resumeData }) => {
 
       {/* Header */}
       <div className="border-b border-gray-200 pb-4">
-        <h1 className="text-3xl font-bold text-gray-900 text-center break-words">{resumeData.header.name || 'Your Name'}</h1>
+        <h1 className="text-3xl font-bold text-gray-900 text-center break-words">
+          {resumeData.header.name || 'Your Name'}
+        </h1>
         <p className="text-gray-600 mt-1 text-center break-words">
           {resumeData.header.email || 'email@example.com'} | {resumeData.header.phone || '(123) 456-7890'}
         </p>
@@ -16,7 +18,9 @@ const Preview = ({ resumeData }) => {
       {/* Summary */}
       <div className="border-b border-gray-200 pb-4">
         <h3 className="text-lg font-semibold text-blue-600 mt-4">Summary</h3>
-        <p className="text-gray-700 mt-2 whitespace-pre-wrap break-words">{resumeData.summary || 'Add a brief professional summary'}</p>
+        <p className="text-gray-700 mt-2 whitespace-pre-wrap break-words">
+          {resumeData.summary || 'Add a brief professional summary'}
+        </p>
       </div>
 
       {/* Experience */}
@@ -31,7 +35,9 @@ const Preview = ({ resumeData }) => {
               <p className="text-gray-600 break-words">
                 {(exp.startDate && exp.endDate) ? `${exp.startDate} - ${exp.endDate}` : 'Start Date - End Date'}
               </p>
-             <p className="text-gray-700 mt-1 whitespace-pre-wrap break-words">{exp.description || 'Description'}</p>
+              <p className="text-gray-700 mt-1 whitespace-pre-wrap break-words">
+                {exp.description || 'Description'}
+              </p>
             </div>
           ))}
         </div>

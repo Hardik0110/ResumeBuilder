@@ -7,7 +7,7 @@ const HomePage = () => {
   const [resumeData, setResumeData] = useState({
     header: { name: '', email: '', phone: '' },
     summary: '',
-    experience: [{ title: '', company: '', duration: '', description: '' }],
+    experience: [{ title: '', company: '', startDate: '', endDate: '', description: '' }], // Updated to match InputCreator
     education: [{ degree: '', institution: '', year: '' }],
     skills: [],
   });
