@@ -3,36 +3,28 @@ import { useForm, Controller } from 'react-hook-form';
 import resumeFields from '../data/resumeFields.json';
 
 const InputCreator = ({ onUpdate }) => {
+  // Generate initial state from resumeFields.json
+  const generateInitialState = () => ({
+    header: Object.fromEntries(resumeFields.header.map((field) => [field.name, ''])),
+    summary: '',
+    experience: [Object.fromEntries(resumeFields.experience.map((field) => [field.name, '']))],
+    education: [Object.fromEntries(resumeFields.education.map((field) => [field.name, '']))],
+    skills: [''],
+  });
+
   const { control, setValue, getValues, watch } = useForm({
-    defaultValues: {
-      header: { name: '', email: '', phone: '' },
-      summary: '',
-      experience: [{ title: '', company: '', startDate: '', endDate: '', description: '' }],
-      education: [{ degree: '', institution: '', year: '' }],
-      skills: [''],
-    },
+    defaultValues: generateInitialState(),
   });
 
-  watch((data) => {
-    onUpdate(data);
-  });
+  watch(onUpdate);
 
-  const addExperience = () => {
-    const currentExperience = getValues('experience');
-    setValue('experience', [
-      ...currentExperience,
-      { title: '', company: '', startDate: '', endDate: '', description: '' },
-    ]);
-  };
-
-  const addEducation = () => {
-    const currentEducation = getValues('education');
-    setValue('education', [...currentEducation, { degree: '', institution: '', year: '' }]);
-  };
-
-  const addSkill = () => {
-    const currentSkills = getValues('skills');
-    setValue('skills', [...currentSkills, '']);
+  const addEntry = (section) => {
+    const current = getValues(section);
+    const newEntry =
+      section === 'skills'
+        ? ''
+        : Object.fromEntries(resumeFields[section].map((field) => [field.name, '']));
+    setValue(section, [...current, newEntry]);
   };
 
   const renderField = (field, section, index = null) => {
@@ -41,19 +33,18 @@ const InputCreator = ({ onUpdate }) => {
         ? `skills.${index}`
         : index !== null
         ? `${section}.${index}.${field.name}`
-        : section === 'summary'
-        ? 'summary'
-        : `${section}.${field.name}`;
+        : `${section}${section === 'summary' ? '' : '.' + field.name}`;
     const commonClasses = 'w-full p-3 mt-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none';
 
     return (
-      <div key={field.name} className="mt-2">
-        {field.label && <label className="text-gray-700 font-medium">{field.label}</label>}
-        <Controller
-          name={fieldName}
-          control={control}
-          render={({ field: { onChange, value } }) =>
-            field.type === 'textarea' ? (
+      <Controller
+        key={field.name}
+        name={fieldName}
+        control={control}
+        render={({ field: { onChange, value } }) => (
+          <div className="mt-2">
+            {field.label && <label className="text-gray-700 font-medium">{field.label}</label>}
+            {field.type === 'textarea' ? (
               <textarea
                 value={value || ''}
                 onChange={onChange}
@@ -68,71 +59,44 @@ const InputCreator = ({ onUpdate }) => {
                 placeholder={field.placeholder}
                 className={commonClasses}
               />
-            )
-          }
-        />
-      </div>
+            )}
+          </div>
+        )}
+      />
     );
   };
 
-  console.log('resumeFields:', resumeFields);
-
   return (
-    <div className="w-full md:w-[100%]">
+    <div className="w-full">
       <h2 className="text-2xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2 mb-4">Build Your Resume</h2>
 
-      {/* Header */}
-      <h3 className="text-lg font-semibold text-blue-600 mt-4">Header</h3>
-      {resumeFields.header.map((field) => renderField(field, 'header'))}
-
-      {/* Summary */}
-      <h3 className="text-lg font-semibold text-blue-600 mt-4">Summary</h3>
-      {renderField(resumeFields.summary, 'summary')}
-
-      {/* Experience */}
-      <h3 className="text-lg font-semibold text-blue-600 mt-4">Experience</h3>
-      {getValues('experience').map((exp, index) => (
-        <div key={index} className="mt-4 border p-4 rounded-md">
-          {resumeFields.experience.map((field) => renderField(field, 'experience', index))}
+      {Object.entries(resumeFields).map(([section, fields]) => (
+        <div key={section}>
+          <h3 className="text-lg font-semibold text-blue-600 mt-4 capitalize">{section}</h3>
+          {Array.isArray(fields) ? (
+            section === 'header' ? (
+              fields.map((field) => renderField(field, section))
+            ) : (
+              getValues(section).map((_, index) => (
+                <div key={index} className={section !== 'skills' ? 'mt-4 border p-4 rounded-md' : 'mt-2'}>
+                  {fields.map((field) => renderField(field, section, index))}
+                </div>
+              ))
+            )
+          ) : (
+            renderField(fields, section)
+          )}
+          {['experience', 'education', 'skills'].includes(section) && (
+            <button
+              type="button"
+              onClick={() => addEntry(section)}
+              className="mt-3 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors"
+            >
+              Add {section.slice(0, -1)}
+            </button>
+          )}
         </div>
       ))}
-      <button
-        type="button"
-        onClick={addExperience}
-        className="mt-3 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors"
-      >
-        Add Experience
-      </button>
-
-      {/* Education */}
-      <h3 className="text-lg font-semibold text-blue-600 mt-4">Education</h3>
-      {getValues('education').map((edu, index) => (
-        <div key={index} className="mt-4 border p-4 rounded-md">
-          {resumeFields.education.map((field) => renderField(field, 'education', index))}
-        </div>
-      ))}
-      <button
-        type="button"
-        onClick={addEducation}
-        className="mt-3 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors"
-      >
-        Add Education
-      </button>
-
-      {/* Skills */}
-      <h3 className="text-lg font-semibold text-blue-600 mt-4">Skills</h3>
-      {getValues('skills').map((skill, index) => (
-        <div key={index} className="mt-2">
-          {resumeFields.skills.map((field) => renderField(field, 'skills', index))}
-        </div>
-      ))}
-      <button
-        type="button"
-        onClick={addSkill}
-        className="mt-3 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors"
-      >
-        Add Skill
-      </button>
     </div>
   );
 };
