@@ -3,7 +3,6 @@ import { useForm, Controller } from 'react-hook-form';
 import resumeFields from '../data/resumeFields.json';
 
 const InputCreator = ({ onUpdate }) => {
-  // Generate initial state from resumeFields.json
   const generateInitialState = () => ({
     header: Object.fromEntries(resumeFields.header.map((field) => [field.name, ''])),
     summary: '',

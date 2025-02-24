@@ -11,7 +11,7 @@ const Preview = ({ resumeData }) => {
           {resumeData.header.name || 'Your Name'}
         </h1>
         <p className="text-gray-600 mt-1 text-center break-words">
-          {resumeData.header.email || 'email@example.com'} | {resumeData.header.phone || '(123) 456-7890'}
+          {resumeData.header.email || 'email@example.com'} | {resumeData.header.phone || '8140900320'}
         </p>
       </div>
 

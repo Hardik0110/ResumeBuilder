@@ -15,7 +15,7 @@
     "education": [
       { "name": "degree", "label": "Degree", "type": "text", "placeholder": "" },
       { "name": "institution", "label": "Institution", "type": "text", "placeholder": "" },
-      { "name": "year", "label": "Year", "type": "text", "placeholder": "" }
+      { "name": "year", "label": "Year", "type": "date", "placeholder": "" }
     ],
     "skills": [
       { "name": "skill", "label": "Skill", "type": "text", "placeholder": "" }
