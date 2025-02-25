@@ -7,7 +7,6 @@ const GeneratedResume = () => {
   const location = useLocation();
   const { resumeData } = location.state || {};
 
-  if (!resumeData) return <p className="text-center text-gray-700 mt-10">No resume data available.</p>;
 
   return (
     <div className="w-full max-w-4xl mx-auto bg-white p-8 mt-10 rounded-xl shadow-lg">
