@@ -1,5 +1,7 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
+import { PDFDownloadLink } from '@react-pdf/renderer'; 
+import ResumePDF from '../components/ResumePDF'; 
 
 const GeneratedResume = () => {
   const location = useLocation();
@@ -29,7 +31,9 @@ const GeneratedResume = () => {
               <h4 className="text-md font-medium text-gray-800">
                 {exp.title} - {exp.company}
               </h4>
-              <p className="text-gray-600">{exp.duration}</p>
+              <p className="text-gray-600">
+                {(exp.startDate && exp.endDate) ? `${exp.startDate} - ${exp.endDate}` : 'Start Date - End Date'}
+              </p>
               <p className="text-gray-700 mt-1">{exp.description}</p>
             </div>
           ))}
@@ -62,6 +66,17 @@ const GeneratedResume = () => {
           </ul>
         </>
       )}
+
+      <div className="flex justify-center mt-8">
+        <PDFDownloadLink
+          document={<ResumePDF resumeData={resumeData} />}
+          fileName="resume.pdf"
+          className="bg-gradient-to-r from-blue-500 to-blue-600 text-white py-4 px-8 rounded-lg 
+                     hover:from-blue-600 hover:to-blue-700 transition-all duration-300 
+                     shadow-lg hover:shadow-xl font-semibold text-lg"
+        >
+        </PDFDownloadLink>
+      </div>
     </div>
   );
 };
