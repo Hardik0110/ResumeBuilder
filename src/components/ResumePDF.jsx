@@ -6,7 +6,7 @@ const styles = StyleSheet.create({
   section: { marginBottom: 10 },
   title: { fontSize: 18, fontWeight: 'bold', color: '#1e3a8a', marginBottom: 10 },
   header: { fontSize: 24, fontWeight: 'bold', textAlign: 'center', marginBottom: 10 },
-  subheader: { fontSize: 14, color: '#1e3a8a', marginTop: 10 },
+  subheader: { fontSize: 14, color: '#1e3a8a', marginTop: 10, textAlign: 'center' },
   text: { marginBottom: 5, lineHeight: 1.5 },
   listItem: { marginLeft: 10, marginBottom: 5 },
 });
