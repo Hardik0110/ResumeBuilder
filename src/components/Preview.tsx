@@ -1,6 +1,11 @@
 import React from 'react';
+import { ResumeData } from '../types/resume';
 
-const Preview = ({ resumeData }) => {
+interface PreviewProps {
+  resumeData: ResumeData;
+}
+
+const Preview: React.FC<PreviewProps> = ({ resumeData }) => {
   return (
     <div className="w-full overflow-hidden">
       <h2 className="text-2xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2 mb-4 text-center">Live Preview</h2>

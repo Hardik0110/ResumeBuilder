@@ -2,17 +2,18 @@ import React, { useState } from 'react';
 import InputCreator from '../components/InputCreator';
 import Preview from '../components/Preview';
 import { Link } from 'react-router-dom';
+import { ResumeData } from '../types/resume';
 
-const HomePage = () => {
-  const [resumeData, setResumeData] = useState({
+const HomePage: React.FC = () => {
+  const [resumeData, setResumeData] = useState<ResumeData>({
     header: { name: '', email: '', phone: '' },
     summary: '',
     experience: [{ title: '', company: '', startDate: '', endDate: '', description: '' }],
     education: [{ degree: '', institution: '', year: '' }],
-    skills: [],
+    skills: [''],
   });
 
-  const handleUpdate = (data) => {
+  const handleUpdate = (data: ResumeData) => {
     setResumeData(data);
   };
 

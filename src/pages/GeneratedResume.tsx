@@ -1,12 +1,20 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { PDFDownloadLink } from '@react-pdf/renderer'; 
-import ResumePDF from '../components/ResumePDF'; 
+import ResumePDF from '../components/ResumePDF';
+import { ResumeData } from '../types/resume';
 
-const GeneratedResume = () => {
+interface LocationState {
+  resumeData: ResumeData;
+}
+
+const GeneratedResume: React.FC = () => {
   const location = useLocation();
-  const { resumeData } = location.state || {};
+  const { resumeData } = (location.state as LocationState) || { resumeData: null };
 
+  if (!resumeData) {
+    return <div className="text-center p-8">No resume data found. Please go back and create a resume.</div>;
+  }
 
   return (
     <div className="w-full max-w-4xl mx-auto bg-white p-8 mt-10 rounded-xl shadow-lg">
@@ -74,6 +82,7 @@ const GeneratedResume = () => {
                      hover:from-blue-600 hover:to-blue-700 transition-all duration-300 
                      shadow-lg hover:shadow-xl font-semibold text-lg"
         >
+          {({ loading }) => (loading ? 'Generating PDF...' : 'Download PDF')}
         </PDFDownloadLink>
       </div>
     </div>
