@@ -6,7 +6,7 @@ import { ResumeData } from '../types/resume';
 
 const HomePage: React.FC = () => {
   const [resumeData, setResumeData] = useState<ResumeData>({
-    header: { name: '', email: '', phone: '' },
+    header: { name: '', email: '', phone: 0 },
     summary: '',
     experience: [{ title: '', company: '', startDate: '', endDate: '', description: '' }],
     education: [{ degree: '', institution: '', year: '' }],

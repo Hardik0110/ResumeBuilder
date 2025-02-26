@@ -12,10 +12,6 @@ const GeneratedResume: React.FC = () => {
   const location = useLocation();
   const { resumeData } = (location.state as LocationState) || { resumeData: null };
 
-  if (!resumeData) {
-    return <div className="text-center p-8">No resume data found. Please go back and create a resume.</div>;
-  }
-
   return (
     <div className="w-full max-w-4xl mx-auto bg-white p-8 mt-10 rounded-xl shadow-lg">
       <h1 className="text-3xl font-bold text-gray-900">{resumeData.header.name}</h1>

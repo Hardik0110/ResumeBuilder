@@ -1,88 +1,69 @@
 import React from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import resumeFields from '../data/resumeFields.json';
-import { ResumeData, Experience, Education, ResumeFields, ResumeHeader, ResumeField } from '../types/resume';
+import { useForm, Controller, Path } from 'react-hook-form';
+import { ResumeData } from '../types/resume';
 
 interface InputCreatorProps {
   onUpdate: (data: ResumeData) => void;
 }
 
 const InputCreator: React.FC<InputCreatorProps> = ({ onUpdate }) => {
-  const generateInitialState = (): ResumeData => ({
-    header: {
-      name: '',
-      email: '',
-      phone: '',
-      ...Object.fromEntries(resumeFields.header.map((field) => [field.name, '']))
-    } as ResumeHeader,
+  const initialState: ResumeData = {
+    header: { name: '', email: '', phone: 0 },
     summary: '',
-    experience: [Object.fromEntries(resumeFields.experience.map((field) => [field.name, ''])) as unknown as Experience],
-    education: [Object.fromEntries(resumeFields.education.map((field) => [field.name, '']))] as unknown as Education[],
+    experience: [{ title: '', company: '', startDate: '', endDate: '', description: '' }],
+    education: [{ year: '', degree: '', institution: '' }],
     skills: [''],
-  });
+  };
 
   const { control, setValue, getValues, watch } = useForm<ResumeData>({
-    defaultValues: generateInitialState(),
+    defaultValues: initialState,
   });
 
   React.useEffect(() => {
     const subscription = watch((value) => {
-      onUpdate(value as ResumeData);
-    });
+      onUpdate(value as ResumeData)})
     return () => subscription.unsubscribe();
   }, [watch, onUpdate]);
 
-  const addEntry = (section: keyof Pick<ResumeData, 'experience' | 'education' | 'skills'>) => {
+  const addEntry = (section: 'experience' | 'education' | 'skills') => {
     const current = getValues(section);
-    const newEntry =
-      section === 'skills'
-        ? ''
-        : Object.fromEntries((resumeFields[section] as ResumeField[]).map((field) => [field.name, '']));
-    setValue(section, [...current, newEntry] as any);
+    let newEntry: any;
+    if (section === 'skills') {
+      newEntry = '';
+    } else if (section === 'experience') {
+      newEntry = { title: '', company: '' };
+    } else {
+      newEntry = { year: '', degree: '', institution: '' };
+    }
+    setValue(section, [...current, newEntry]);
   };
 
-  const renderField = (
-    field: ResumeField, 
-    section: keyof ResumeFields, 
-    index: number | null = null
-  ) => {
-    const fieldName =
-      section === 'skills'
-        ? `skills.${index}`
-        : index !== null
-        ? `${section}.${index}.${field.name}`
-        : section === 'summary'
-        ? 'summary'
-        : `header.${field.name}`;
-
-    const commonClasses = 'w-full p-3 mt-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none';
-
+  const renderField = (name: Path<ResumeData>, label: string, type: 'text' | 'textarea' | 'date' | 'number', placeholder?: string) => {
     return (
       <Controller
-        key={fieldName}
-        name={fieldName as any}
-        control={control}
-        render={({ field: { onChange, value } }) => (
-          <div className="mt-2">
-            {field.label && <label className="text-gray-700 font-medium">{field.label}</label>}
-            {field.type === 'textarea' ? (
-              <textarea
-                value={value || ''}
-                onChange={onChange}
-                placeholder={field.placeholder}
-                className={`${commonClasses} ${field.name === 'summary' ? 'min-h-[100px]' : 'min-h-[80px]'}`}
-              />
-            ) : (
-              <input
-                type={field.type}
-                value={value || ''}
-                onChange={onChange}
-                placeholder={field.placeholder}
-                className={commonClasses}
-              />
-            )}
-          </div>
+      name={name}
+      control={control}
+      render={({ field }) => (
+        <div className="mt-2">
+        <label className="text-gray-700 font-medium">{label}</label>
+        {type === 'textarea' ? (
+          <textarea
+          value={String(field.value) || ''}
+          onChange={field.onChange}
+          placeholder={placeholder}
+          className="w-full p-3 mt-2 border border-gray-300 rounded-md min-h-[100px]"
+          />
+        ) : (
+          <input
+          type={type}
+          value={String(field.value) || ''}
+          onChange={field.onChange}
+          placeholder={placeholder}
+          className="w-full p-3 mt-2 border border-gray-300 rounded-md"
+          />
         )}
+        </div>
+      )}
       />
     );
   };
@@ -90,49 +71,75 @@ const InputCreator: React.FC<InputCreatorProps> = ({ onUpdate }) => {
   return (
     <div className="w-full">
       <h2 className="text-2xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2 mb-4">Build Your Resume</h2>
-  
-      {(Object.entries(resumeFields) as [keyof ResumeFields, ResumeField | ResumeField[]][]).map(([section, fields]) => (
-        <div key={section}>
-          <h3 className="text-lg font-semibold text-blue-600 mt-4 capitalize">{section}</h3>
-  
-          {section === 'summary' ? (
-            renderField(fields as ResumeField, section)
-          ) : section === 'header' ? (
-            (fields as ResumeField[]).map((field) => renderField(field, section))
-          ) : (
-            Array.isArray(getValues(section as keyof ResumeData)) && (
-              (getValues(section as keyof ResumeData) as Array<any>).map((_, index: number) => (
-                <div key={index} className={section !== 'skills' ? 'mt-4 border p-4 rounded-md' : 'mt-2'}>
-                  {section === 'skills' ? (
-                    renderField(
-                      {
-                        name: `skills.${index}`,
-                        label: `Skill ${index + 1}`,
-                        type: 'text',
-                        placeholder: 'Enter a skill',
-                      } as ResumeField,
-                      section,
-                      index
-                    )
-                  ) : (
-                    (fields as ResumeField[]).map((field) => renderField(field, section, index))
-                  )}
-                </div>
-              ))
-            )
-          )}
-  
-          {(['experience', 'education', 'skills'] as const).includes(section as any) && (
-            <button
-              type="button"
-              onClick={() => addEntry(section as keyof Pick<ResumeData, 'experience' | 'education' | 'skills'>)}
-              className="mt-3 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors"
-            >
-              Add {section === 'skills' ? 'skill' : section.slice(0, -1)}
-            </button>
-          )}
-        </div>
-      ))}
+
+      {/* Header Section */}
+      <div>
+        <h3 className="text-lg font-semibold text-blue-600 mt-4">Header</h3>
+        {renderField('header.name', 'Name', 'text', 'Enter your name')}
+        {renderField('header.email', 'Email', 'text', 'Enter your email')}
+        {renderField('header.phone', 'Phone', 'number', 'Enter your phone')}
+      </div>
+
+      {/* Summary Section */}
+      <div>
+        <h3 className="text-lg font-semibold text-blue-600 mt-4">Summary</h3>
+        {renderField('summary', 'Summary', 'textarea', 'Write a brief summary')}
+      </div>
+
+      {/* Experience Section */}
+      <div>
+        <h3 className="text-lg font-semibold text-blue-600 mt-4">Experience</h3>
+        {getValues('experience').map((_, index) => (
+          <div key={index} className="mt-4 border p-4 rounded-md">
+            {renderField(`experience.${index}.title`, 'Job Title', 'text', 'Enter job title')}
+            {renderField(`experience.${index}.company`, 'Company', 'text', 'Enter company name')}
+            {renderField(`experience.${index}.startDate`, 'Startt Date', 'date', 'Start Date')}
+            {renderField(`experience.${index}.endDate`, 'End Date ', 'date', 'End Date')}
+          </div>
+        ))}
+        <button
+          type="button"
+          onClick={() => addEntry('experience')}
+          className="mt-3 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+        >
+          Add Experience
+        </button>
+      </div>
+
+      {/* Education Section */}
+      <div>
+        <h3 className="text-lg font-semibold text-blue-600 mt-4">Education</h3>
+        {getValues('education').map((_, index) => (
+          <div key={index} className="mt-4 border p-4 rounded-md">
+            {renderField(`education.${index}.institution`, 'School', 'text', 'Enter school name')}
+            {renderField(`education.${index}.degree`, 'Degree', 'text', 'Enter degree')}
+          </div>
+        ))}
+        <button
+          type="button"
+          onClick={() => addEntry('education')}
+          className="mt-3 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+        >
+          Add Education
+        </button>
+      </div>
+
+      {/* Skills Section */}
+      <div>
+        <h3 className="text-lg font-semibold text-blue-600 mt-4">Skills</h3>
+        {getValues('skills').map((_, index) => (
+          <div key={index} className="mt-2">
+            {renderField(`skills.${index}`, `Skill ${index + 1}`, 'text', 'Enter a skill')}
+          </div>
+        ))}
+        <button
+          type="button"
+          onClick={() => addEntry('skills')}
+          className="mt-3 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+        >
+          Add Skill
+        </button>
+      </div>
     </div>
   );
 };
